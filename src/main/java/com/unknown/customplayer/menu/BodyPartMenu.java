@@ -21,23 +21,33 @@ public class BodyPartMenu extends AbstractContainerMenu {
 
     //  ⚠ Slot order IS this array's order, and quickMoveStack's ranges depend on it. The screen reads
     //  the same array for its connector lines, so the two can never disagree about which slot is which.
-    //  ⚠ Ten, not fourteen: bone / skin / muscle / sinew host nothing. Something living IN your skin is
-    //  a different idea from something set into an eye socket, and it has not been specified.
+    //  All fourteen: every part hosts. ⚠ Order is the layout -- senses down the left, trunk and limbs
+    //  down the right, the four whole-body tissues along the bottom.
     public static final BodyPart[] SLOTS = {
             BodyPart.EYES, BodyPart.EARS, BodyPart.NOSE, BodyPart.MOUTH, BodyPart.BRAIN,
             BodyPart.TORSO, BodyPart.ARM_LEFT, BodyPart.ARM_RIGHT,
             BodyPart.LEG_LEFT, BodyPart.LEG_RIGHT,
+            BodyPart.BONE, BodyPart.SKIN, BodyPart.MUSCLE, BodyPart.SINEW,
     };
 
     public static final int PART_SLOTS = SLOTS.length;
 
-    //  Two columns flanking the figure: the four senses left, the trunk and limbs right. Indexed to
-    //  match SLOTS, and the screen reads these same arrays for its connector lines -- one source, so
-    //  a slot and the line pointing at it can never drift apart.
+    //  Two columns flanking the figure, then a row underneath. Indexed to match SLOTS; the screen reads
+    //  these same arrays, so a slot and what the screen says about it can never drift apart.
     //  ⚠ The panel is 222 tall for a reason: at 720p with GUI scale 3 only 240 scaled pixels exist.
     //  An earlier layout came to 248 and would have run off the bottom of the screen.
-    public static final int[] SLOT_X = {8, 8, 8, 8, 8, 152, 152, 152, 152, 152};
-    public static final int[] SLOT_Y = {16, 34, 52, 70, 88, 16, 34, 52, 70, 88};
+    //  ⚠⚠ There are NO connector lines. Fourteen of them were spaghetti whatever their weight; the
+    //  screen highlights one pair on hover instead, which is stronger exactly when it is wanted.
+    public static final int[] SLOT_X = {
+            8, 8, 8, 8, 8,
+            152, 152, 152, 152, 152,
+            26, 62, 98, 134,
+    };
+    public static final int[] SLOT_Y = {
+            16, 34, 52, 70, 88,
+            16, 34, 52, 70, 88,
+            110, 110, 110, 110,
+    };
 
     private static final int INVENTORY_X = 8;
     private static final int INVENTORY_Y = 140;

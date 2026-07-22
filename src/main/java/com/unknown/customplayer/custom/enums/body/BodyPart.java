@@ -30,12 +30,12 @@ public enum BodyPart implements StringRepresentable, EnumTranslatable {
     LEG_LEFT (PartScale.BODY,  true),
     LEG_RIGHT(PartScale.BODY,  true),
 
-    //  骨肌肤筋 -- whole-body, and nothing installs into them: something living IN your skin is a
-    //  different idea from something set into an eye socket, and it has not been specified.
-    BONE     (PartScale.BODY,  false),
-    SKIN     (PartScale.BODY,  false),
-    MUSCLE   (PartScale.BODY,  false),
-    SINEW    (PartScale.BODY,  false);
+    //  骨肌肤筋 -- whole-body: not sided, not regional, and never drawn on the figure. They host all
+    //  the same, though: something can live in your bones as readily as in an eye socket.
+    BONE     (PartScale.BODY,  true),
+    SKIN     (PartScale.BODY,  true),
+    MUSCLE   (PartScale.BODY,  true),
+    SINEW    (PartScale.BODY,  true);
 
     public static final Codec<BodyPart> CODEC = StringRepresentable.fromEnum(BodyPart::values);
     private static final String KEY_PREFIX = "customplayer.enum.body.body_part.";
@@ -65,9 +65,10 @@ public enum BodyPart implements StringRepresentable, EnumTranslatable {
     //  ⚠ A cross-scale pair is unrepresentable, not merely refused: a leg can never read "blind".
     public boolean accepts(Ailment ailment) {return ailment.scale() == scale;}
 
-    //  Whole-body parts are the ones with no place on the figure. The screen reads this to decide
-    //  which parts get a drawn region and which get a labelled square underneath.
-    public boolean regional() {return installable || scale == PartScale.SENSE;}
+    //  ⚠ Whether the part has a PLACE on the body, which is a different question from whether it can be
+    //  hurt or host something. Bone and skin are everywhere, so the screen gives them their own row
+    //  rather than pinning them to a spot that would misdescribe them.
+    public boolean regional() {return this != BONE && this != SKIN && this != MUSCLE && this != SINEW;}
 
     @Override
     public @NotNull String getSerializedName() {return name().toLowerCase();}

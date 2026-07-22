@@ -17,7 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 //  A blocky figure drawn entirely with g.fill -- no texture anywhere, so it is sharp at every GUI scale.
-//  Each region is tinted by what is wrong with that part, and a hairline connects it to its slot.
+//  ⚠⚠ NO connector lines. Fourteen slots pointing at fourteen targets is spaghetti at any line weight;
+//  hovering either a slot or a region highlights the pair instead. Nothing is drawn until it is wanted,
+//  and then exactly one thing is.
 public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
 
     private record Box(int x1, int y1, int x2, int y2) {}
@@ -28,11 +30,11 @@ public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
 
     static {
         FIGURE.put(BodyPart.BRAIN,     new Box(79, 16,  97,  34));
-        FIGURE.put(BodyPart.TORSO,     new Box(76, 38, 100,  72));
-        FIGURE.put(BodyPart.ARM_LEFT,  new Box(66, 38,  74,  68));
-        FIGURE.put(BodyPart.ARM_RIGHT, new Box(102, 38, 110, 68));
-        FIGURE.put(BodyPart.LEG_LEFT,  new Box(79, 76,  87, 108));
-        FIGURE.put(BodyPart.LEG_RIGHT, new Box(89, 76,  97, 108));
+        FIGURE.put(BodyPart.TORSO,     new Box(76, 38, 100,  70));
+        FIGURE.put(BodyPart.ARM_LEFT,  new Box(66, 38,  74,  66));
+        FIGURE.put(BodyPart.ARM_RIGHT, new Box(102, 38, 110, 66));
+        FIGURE.put(BodyPart.LEG_LEFT,  new Box(79, 74,  87, 104));
+        FIGURE.put(BodyPart.LEG_RIGHT, new Box(89, 74,  97, 104));
         //  The four senses are marks ON the skull, not limbs.
         FIGURE.put(BodyPart.EARS,      new Box(77, 22,  99,  24));
         FIGURE.put(BodyPart.EYES,      new Box(82, 26,  94,  28));
@@ -48,24 +50,17 @@ public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
             BodyPart.LEG_LEFT, BodyPart.LEG_RIGHT,
     };
 
-    //  ⚠ Whole-body parts get a labelled square each, NOT a place on the figure. Drawing "bone" at some
-    //  spot would lie about what it means -- it is the state of every bone, not a break in one place.
-    private static final BodyPart[] WHOLE_BODY = {
-            BodyPart.BONE, BodyPart.SKIN, BodyPart.MUSCLE, BodyPart.SINEW,
-    };
-
-    private static final int WHOLE_Y = 116;
-    private static final int WHOLE_SIZE = 10;
-    private static final int WHOLE_STEP = 34;
-    private static final int WHOLE_LEFT = 30;
+    //  ⚠ Bone, skin, muscle and sinew are everywhere, so they get a tint bar under their own slot rather
+    //  than a spot on the figure. Pinning "bone" to one place would misdescribe what it is.
+    private static final int TINT_BAR_H = 3;
+    private static final int TINT_BAR_GAP = 2;
 
     private static final int PANEL_FILL = 0xBF000000;
     private static final int BORDER = 0x66FFFFFF;
     private static final int SLOT_FILL = 0x33FFFFFF;
     private static final int TEXT = 0xFFFFFFFF;
-    private static final int MUTED = 0xFFA0A0A0;
-    private static final int LINE = 0x33FFFFFF;
     private static final int ACCENT = 0xFF7FB2E5;
+    private static final int HIGHLIGHT = 0xFFFFFFFF;
 
     //  ⚠ Status colours are the IDENTITY of a condition, not a judgement of a number -- there are no
     //  numbers here. Healthy is the accent; each grade darkens or reddens what it owns.
@@ -87,52 +82,46 @@ public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
         g.renderOutline(x, y, imageWidth, imageHeight, BORDER);
         g.fill(x + 7, y + 13, x + imageWidth - 7, y + 14, ACCENT);
 
-        renderConnectors(g, x, y);
-        renderFigure(g, x, y);
-        renderWholeBody(g, x, y);
-        renderSlots(g, x, y);
-    }
-
-    //  ⚠ Drawn FIRST, so the figure and the slots both sit on top of their own hairlines.
-    private void renderConnectors(GuiGraphics g, int x, int y) {
-        for (int i = 0; i < BodyPartMenu.PART_SLOTS; i++) {
-            Box box = FIGURE.get(menu.part(i));
-            if (box == null) continue;
-
-            int slotX = BodyPartMenu.SLOT_X[i];
-            int slotY = BodyPartMenu.SLOT_Y[i] + 8;
-            int partX = (box.x1() + box.x2()) / 2;
-            int partY = (box.y1() + box.y2()) / 2;
-
-            //  An L, never a diagonal: g.fill draws rectangles, and a stepped line would look ragged.
-            int fromX = slotX < partX ? slotX + 16 : slotX;
-            g.fill(x + Math.min(fromX, partX), y + slotY, x + Math.max(fromX, partX), y + slotY + 1, LINE);
-            g.fill(x + partX, y + Math.min(slotY, partY), x + partX + 1, y + Math.max(slotY, partY), LINE);
-        }
+        BodyPart focus = focused(mouseX, mouseY);
+        renderFigure(g, x, y, focus);
+        renderSlots(g, x, y, focus);
     }
 
     //  Skull, trunk and limbs first, then the senses on top -- they sit inside the skull box.
-    private void renderFigure(GuiGraphics g, int x, int y) {
-        for (int i = HIT_ORDER.length - 1; i >= 0; i--) drawPart(g, x, y, HIT_ORDER[i]);
+    private void renderFigure(GuiGraphics g, int x, int y, @Nullable BodyPart focus) {
+        for (int i = HIT_ORDER.length - 1; i >= 0; i--) {
+            BodyPart part = HIT_ORDER[i];
+            Box box = FIGURE.get(part);
+            g.fill(x + box.x1(), y + box.y1(), x + box.x2(), y + box.y2(), tint(part));
+            g.renderOutline(x + box.x1(), y + box.y1(),
+                    box.x2() - box.x1(), box.y2() - box.y1(), part == focus ? HIGHLIGHT : OUTLINE);
+        }
     }
 
-    private void drawPart(GuiGraphics g, int x, int y, BodyPart part) {
-        Box box = FIGURE.get(part);
-        g.fill(x + box.x1(), y + box.y1(), x + box.x2(), y + box.y2(), tint(part));
-        g.renderOutline(x + box.x1(), y + box.y1(),
-                box.x2() - box.x1(), box.y2() - box.y1(), OUTLINE);
-    }
+    private void renderSlots(GuiGraphics g, int x, int y, @Nullable BodyPart focus) {
+        for (int i = 0; i < BodyPartMenu.PART_SLOTS; i++) {
+            BodyPart part = menu.part(i);
+            int sx = x + BodyPartMenu.SLOT_X[i];
+            int sy = y + BodyPartMenu.SLOT_Y[i];
+            g.fill(sx, sy, sx + 16, sy + 16, SLOT_FILL);
+            if (part == focus) g.renderOutline(sx - 1, sy - 1, 18, 18, HIGHLIGHT);
 
-    //  Bone / skin / muscle / sinew: a square and its name, under the figure.
-    private void renderWholeBody(GuiGraphics g, int x, int y) {
-        for (int i = 0; i < WHOLE_BODY.length; i++) {
-            BodyPart part = WHOLE_BODY[i];
-            int px = x + WHOLE_LEFT + i * WHOLE_STEP;
-            g.fill(px, y + WHOLE_Y, px + WHOLE_SIZE, y + WHOLE_Y + WHOLE_SIZE, tint(part));
-            g.renderOutline(px, y + WHOLE_Y, WHOLE_SIZE, WHOLE_SIZE, OUTLINE);
-
-            Component name = Component.translatable(part.getTranslationKey());
-            g.drawString(font, name, px + WHOLE_SIZE + 3, y + WHOLE_Y + 1, MUTED, false);
+            //  Only the placeless ones carry their own status bar; the rest are tinted on the figure.
+            if (!part.regional()) {
+                int by = sy + 16 + TINT_BAR_GAP;
+                g.fill(sx, by, sx + 16, by + TINT_BAR_H, tint(part));
+            }
+        }
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 9; col++) {
+                int sx = x + 8 + col * 18;
+                int sy = y + 140 + row * 18;
+                g.fill(sx, sy, sx + 16, sy + 16, SLOT_FILL);
+            }
+        }
+        for (int col = 0; col < 9; col++) {
+            int sx = x + 8 + col * 18;
+            g.fill(sx, y + 198, sx + 16, y + 198 + 16, SLOT_FILL);
         }
     }
 
@@ -151,23 +140,20 @@ public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
         };
     }
 
-    private void renderSlots(GuiGraphics g, int x, int y) {
+    //  Which part the cursor means, from EITHER side -- a slot or a region. ⚠ The slot is asked first:
+    //  a whole-body slot has no region at all, and the figure must not answer for it.
+    private @Nullable BodyPart focused(int mouseX, int mouseY) {
         for (int i = 0; i < BodyPartMenu.PART_SLOTS; i++) {
-            int sx = x + BodyPartMenu.SLOT_X[i];
-            int sy = y + BodyPartMenu.SLOT_Y[i];
-            g.fill(sx, sy, sx + 16, sy + 16, SLOT_FILL);
-        }
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                int sx = x + 8 + col * 18;
-                int sy = y + 140 + row * 18;
-                g.fill(sx, sy, sx + 16, sy + 16, SLOT_FILL);
+            int sx = BodyPartMenu.SLOT_X[i];
+            int sy = BodyPartMenu.SLOT_Y[i];
+            if (inBox(new Box(sx, sy, sx + 16, sy + 16), mouseX - leftPos, mouseY - topPos)) {
+                return menu.part(i);
             }
         }
-        for (int col = 0; col < 9; col++) {
-            int sx = x + 8 + col * 18;
-            g.fill(sx, y + 198, sx + 16, y + 198 + 16, SLOT_FILL);
+        for (BodyPart part : HIT_ORDER) {
+            if (inBox(FIGURE.get(part), mouseX - leftPos, mouseY - topPos)) return part;
         }
+        return null;
     }
 
     @Override
@@ -183,13 +169,13 @@ public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
         renderTooltip(g, mouseX, mouseY);
     }
 
-    //  Hovering a region names the part and says what is wrong with it.
+    //  Hovering either side names the part and says what is wrong with it.
     //  ⚠ Runs BEFORE renderTooltip, so a hovered slot's item tooltip still wins -- an item under the
     //  cursor is the more specific answer to "what am I pointing at".
     private void renderPartTooltip(GuiGraphics g, int mouseX, int mouseY) {
         if (hoveredSlot != null && hoveredSlot.hasItem()) return;
 
-        BodyPart part = hovered(mouseX - leftPos, mouseY - topPos);
+        BodyPart part = focused(mouseX, mouseY);
         if (part == null) return;
 
         PartState state = BodyPartService.state(minecraft.player, part);
@@ -199,19 +185,6 @@ public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
             lines.add(Component.translatable(state.ailment().getTranslationKey(part)));
         }
         g.renderComponentTooltip(font, lines, mouseX, mouseY);
-    }
-
-    private @Nullable BodyPart hovered(int x, int y) {
-        for (BodyPart part : HIT_ORDER) {
-            if (inBox(FIGURE.get(part), x, y)) return part;
-        }
-        for (int i = 0; i < WHOLE_BODY.length; i++) {
-            int px = WHOLE_LEFT + i * WHOLE_STEP;
-            if (inBox(new Box(px, WHOLE_Y, px + WHOLE_SIZE, WHOLE_Y + WHOLE_SIZE), x, y)) {
-                return WHOLE_BODY[i];
-            }
-        }
-        return null;
     }
 
     private static boolean inBox(Box box, int x, int y) {
