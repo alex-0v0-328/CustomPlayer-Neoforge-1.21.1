@@ -7,3 +7,9 @@ pluginManagement {
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
+
+// ⚠ Load-bearing for the composite build. A consumer's includeBuild substitutes on group:PROJECT_NAME,
+// and the project name defaults to the DIRECTORY name -- which here carries a version suffix. Without
+// this line guzhenren has to depend on 'customplayer-template-1.21.1', and renaming the folder would
+// silently break it.
+rootProject.name = 'customplayer'

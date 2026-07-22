@@ -1,17 +1,17 @@
 package com.unknown.customplayer;
 
+import com.mojang.logging.LogUtils;
+import com.unknown.customplayer.registry.ModAttachments;
+import com.unknown.customplayer.registry.ModEffects;
+import com.unknown.customplayer.registry.ModMenus;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
 
-import com.mojang.logging.LogUtils;
-
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
-
+//  A library mod: it defines the player's body and nothing else. What a mark MEANS and which items may
+//  be installed are decided by whoever depends on this -- see the mods.toml description.
+//  ⚠ Every registry holder is registered from here, in one place, so load order is readable.
 @Mod(CustomPlayer.MOD_ID)
 public class CustomPlayer {
 
@@ -19,18 +19,8 @@ public class CustomPlayer {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public CustomPlayer(IEventBus modEventBus, ModContainer modContainer) {
-        modEventBus.addListener(this::commonSetup);
-        NeoForge.EVENT_BUS.register(this);
-    }
-
-    private void commonSetup(FMLCommonSetupEvent event) {
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-    }
-
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
+        ModAttachments.register(modEventBus);
+        ModEffects.register(modEventBus);
+        ModMenus.register(modEventBus);
     }
 }
