@@ -27,8 +27,8 @@ public final class ModPayloads {
         registrar.playToServer(OpenBodyPayload.TYPE, OpenBodyPayload.STREAM_CODEC, ModPayloads::openBody);
     }
 
-    //  ⚠ PayloadRegistrar defaults to HandlerThread.MAIN in NeoForge 21.1, so this already runs on the
-    //  server thread -- no enqueueWork needed. Do not add one "to be safe"; it only hides the question.
+    //  ⚠ PayloadRegistrar defaults to HandlerThread.MAIN in NeoForge 21.1 -- already on the server thread,
+    //  no enqueueWork. See vault.
     private static void openBody(OpenBodyPayload payload, IPayloadContext context) {
         if (!(context.player() instanceof ServerPlayer player)) return;
 

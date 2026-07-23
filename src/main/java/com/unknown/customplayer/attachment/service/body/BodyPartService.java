@@ -10,8 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 //  The only writer of BodyPartData. What a mark KEY means is the caller's business; this stores counts.
-//  ⚠ Reads take Player, writes take ServerPlayer. That split lets a HUD reuse the read path and makes
-//  "writes are server-side" a compile-time fact rather than a convention.
+//  ⚠ Reads take Player, writes take ServerPlayer -- the project-wide split. See vault.
 public final class BodyPartService {
 
     private BodyPartService() {}

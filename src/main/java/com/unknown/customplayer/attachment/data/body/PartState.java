@@ -14,10 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 //  What is true of one body part: at most ONE ailment, plus whatever it has accumulated.
-//  ⚠ One value, not a set: 劳/伤/残/毁 are four readings of a single axis, so a leg cannot be both
-//  strained and crippled. DESTROYED likewise swallows LOST. The worse reading is simply the answer.
-//  ⚠ The state does not know WHICH part it belongs to -- BodyPartData's key says that, and storing it
-//  twice is how the two come to disagree. Scale validation therefore happens in BodyPartData.
+//  ⚠ One value not a set; scale validation lives in BodyPartData (only it knows the part). See vault.
 public record PartState(@Nullable Ailment ailment, Map<ResourceLocation, PartMark> marks) {
 
     public static final PartState DEFAULT = new PartState(null, Map.of());
@@ -34,8 +31,7 @@ public record PartState(@Nullable Ailment ailment, Map<ResourceLocation, PartMar
             PartState::new);
 
     public PartState {
-        //  TreeMap because ResourceLocation sorts, and an unstable key order would make every save look
-        //  changed when nothing was.
+        //  TreeMap: ResourceLocation sorts, and an unstable key order makes every save look changed.
         Map<ResourceLocation, PartMark> pruned = new TreeMap<>();
         marks.forEach((key, value) -> {if (!value.isDefault()) pruned.put(key, value);});
         marks = Collections.unmodifiableMap(pruned);
@@ -47,8 +43,7 @@ public record PartState(@Nullable Ailment ailment, Map<ResourceLocation, PartMar
 
     public PartState withAilment(@Nullable Ailment value) {return new PartState(value, marks);}
 
-    //  ⚠ Never downgrades. A crippled leg does not become merely wounded because he took a smaller fall
-    //  later; injury rules fire on every qualifying hit and would otherwise heal by accident.
+    //  ⚠ Never downgrades -- rules fire on every qualifying hit and would otherwise heal by accident.
     public PartState worsened(Ailment value) {
         return value.worseThan(ailment) ? withAilment(value) : this;
     }

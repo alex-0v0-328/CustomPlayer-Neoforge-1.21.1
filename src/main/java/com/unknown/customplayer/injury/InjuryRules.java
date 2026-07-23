@@ -10,10 +10,8 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.server.level.ServerPlayer;
 
-//  The table of "this kind of harm does this to the body", open for a dependent mod to extend.
-//  ⚠ Two built-in families ship here, and their triggers are measured differently ON PURPOSE:
-//  a fall is one large hit, burning is one point per tick. Reading both as "damage >= n" would mean
-//  fire could never qualify. FALL grades on the hit; BURN grades on seconds alight.
+//  The table of "this kind of harm does this to the body", open for a dependent to extend.
+//  ⚠ FALL grades on the hit, BURN on seconds alight -- two different measures, on purpose. See vault.
 public final class InjuryRules {
 
     private InjuryRules() {}
@@ -30,8 +28,7 @@ public final class InjuryRules {
     public static final String FALL = "fall";
     public static final String BURN = "burn";
 
-    //  ⚠ LinkedHashMap: registration order is the order rules are offered, and a dependent adding one
-    //  should not silently reorder the built-ins.
+    //  ⚠ LinkedHashMap: registration order is offer order; a dependent must not reorder the built-ins.
     private static final Map<String, List<InjuryRule>> RULES = new LinkedHashMap<>();
 
     static {
@@ -41,8 +38,7 @@ public final class InjuryRules {
         register(BURN, InjuryRule.of(BURN_CRIPPLED, BodyPart.SKIN, Ailment.CRIPPLED));
     }
 
-    //  ⚠ A dependent registers under its own channel name and drives it from its own event; this mod
-    //  only fires the two it knows about. Nothing here ever names another mod's damage type.
+    //  ⚠ A dependent registers under its own channel and drives it from its own event. See vault.
     public static void register(String channel, InjuryRule rule) {
         RULES.computeIfAbsent(channel, key -> new ArrayList<>()).add(rule);
     }
@@ -51,9 +47,8 @@ public final class InjuryRules {
         return RULES.getOrDefault(channel, List.of());
     }
 
-    //  Applies the WORST rule that qualifies, not every one of them.
-    //  ⚠ Running them all would apply WOUND then CRIPPLED on a big fall, and the first write would be
-    //  pure noise -- worsen() would discard it anyway, but the packet it pushed would not un-send.
+    //  Applies the WORST qualifying rule, not every one. ⚠ Running all would push a WOUND packet that
+    //  worsen() then discards -- but the packet does not un-send. See vault.
     public static void fire(ServerPlayer player, String channel, float measure, List<BodyPart> candidates) {
         InjuryRule worst = rules(channel).stream()
                 .filter(rule -> rule.triggers(measure))

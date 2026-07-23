@@ -8,11 +8,7 @@ import java.util.Map;
 import net.minecraft.world.item.ItemStack;
 
 //  What is installed in each part. One item per part, and the part IS the address.
-//  ⚠⚠ Serialized but NOT synced, and it has no STREAM_CODEC at all. The client sees it through the menu,
-//  on vanilla's own slot channel. Syncing would re-push every stack on every click for no gain.
-//  ⚠ Empties are pruned rather than kept: this is a MAP, so an absent key already means "nothing here".
-//  That is why ItemStack.OPTIONAL_CODEC is not needed -- the positional-hole problem a LIST has does
-//  not exist in this shape. Do not copy that rule across without checking which shape you are in.
+//  ⚠⚠ Serialized but NOT synced, no STREAM_CODEC: the client sees it through the menu. See vault.
 public record PartStorage(Map<BodyPart, ItemStack> installed) {
 
     public static final PartStorage DEFAULT = new PartStorage(Map.of());

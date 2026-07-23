@@ -26,9 +26,8 @@ public class ModDamageTypeTagsProvider extends TagsProvider<DamageType> {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        //  A destroyed brain is an ending, not a hit: no armour, enchantment, potion or shield reads on
-        //  it. ⚠ Creative is NOT covered here and must not be -- vanilla's own invulnerability still
-        //  applies, which is exactly the behaviour the sibling mod's lethal states have.
+        //  A destroyed brain is an ending, not a hit -- nothing blunts it. ⚠ Creative is NOT covered and
+        //  must not be: vanilla's own invulnerability still applies. See vault.
         unstoppable(DamageTypeTags.BYPASSES_ARMOR);
         unstoppable(DamageTypeTags.BYPASSES_EFFECTS);
         unstoppable(DamageTypeTags.BYPASSES_ENCHANTMENTS);

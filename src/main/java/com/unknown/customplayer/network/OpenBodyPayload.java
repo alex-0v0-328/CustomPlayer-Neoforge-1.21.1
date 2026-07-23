@@ -7,10 +7,8 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-//  "I pressed the key." That is the whole message.
-//  ⚠⚠ The ONE payload this mod has, and it carries CLIENT INTENT, never player data. Attachment sync is
-//  server to client only and cannot bring a keypress upstream, which is the entire reason it exists.
-//  Downstream data must never get a payload -- loosen the attachment's sync predicate instead.
+//  "I pressed the key." ⚠⚠ The ONE payload -- CLIENT INTENT, never player data; sync is server->client
+//  only, so a keypress cannot ride it upstream. Downstream data loosens the sync predicate instead. Vault.
 public record OpenBodyPayload() implements CustomPacketPayload {
 
     public static final Type<OpenBodyPayload> TYPE = new Type<>(

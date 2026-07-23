@@ -15,11 +15,8 @@ import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.minecraft.world.level.GameRules;
 
-//  ⚠⚠ THE one place that decides what a body carries across a death. There is deliberately no
-//  copyOnDeath() on either attachment: a copy and a handler cannot both be the last write.
-//  ⚠ keepInventory OFF is a COMPLETE reset -- ailments heal, installed items drop, marks go too. The
-//  reason is not internal: the dependent mod's keepInventory-off branch runs its own full reset, and a
-//  body that kept its marks would tell a different story about the same death.
+//  ⚠⚠ THE one place that decides what a body carries across a death -- no copyOnDeath on either attachment.
+//  ⚠ keepInventory OFF is a COMPLETE reset (ailments heal, items drop, marks go); aligns downstream. Vault.
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID)
 public final class PlayerDataEvents {
 
@@ -40,15 +37,13 @@ public final class PlayerDataEvents {
             return;
         }
 
-        //  A full reset. The installed items are NOT deleted here -- onDrops already put them on the
-        //  ground at the moment of death, which is a different instant, not a second writer.
+        //  A full reset. Installed items are NOT deleted here -- onDrops already dropped them at death.
         BodyPartService.store(fresh, BodyPartData.DEFAULT);
         PartStorageService.store(fresh, PartStorage.DEFAULT);
     }
 
-    //  ⚠ Dropping has to happen HERE, at the death, not in onClone: by clone time the old entity's
-    //  position and the drop window are both gone. They fall with the pack, because the body obeys the
-    //  same rule the pack does.
+    //  ⚠ Dropping happens HERE, at death, not in onClone: by clone time the old entity's position and drop
+    //  window are gone. They fall with the pack. See vault.
     @SubscribeEvent
     public static void onDrops(LivingDropsEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player) || keepInventory(player)) return;

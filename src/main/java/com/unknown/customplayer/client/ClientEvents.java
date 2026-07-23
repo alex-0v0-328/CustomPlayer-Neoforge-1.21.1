@@ -30,8 +30,7 @@ public final class ClientEvents {
         event.register(ModMenus.BODY_PART_MENU.get(), BodyPartScreen::new);
     }
 
-    //  ⚠ The key only ASKS. Opening a menu is the server's to do -- setScreen here would give a screen
-    //  with no container behind it, and every click would desync. Hence this mod's one payload.
+    //  ⚠ The key only ASKS -- opening the menu is the server's; setScreen here would desync. Hence the payload.
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();

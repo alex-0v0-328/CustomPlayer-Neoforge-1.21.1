@@ -9,29 +9,25 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
-//  The fourteen addressable parts of a player, on two scales.
-//  ⚠ There is NO `HEAD`. The head is what the five sense parts are IN, not a sixth thing that can be
-//  hurt on its own -- BRAIN is what the screen draws as the skull. Do not re-add a placeholder part.
-//  ⚠ BONE / SKIN / MUSCLE / SINEW are WHOLE-BODY: not sided, not regional, and never drawn on the
-//  figure. "The bones" is the state of all of them, not a break in one place.
+//  The fourteen addressable parts, on two scales. There is NO HEAD -- BRAIN is drawn as the skull.
+//  ⚠ BONE/SKIN/MUSCLE/SINEW are WHOLE-BODY: not sided, not regional, never drawn on the figure. See vault.
 public enum BodyPart implements StringRepresentable, EnumTranslatable {
 
-    //  眼耳口鼻脑 -- three degrees, of which two are stored.
+    //  Senses [眼耳口鼻脑] -- three degrees, upper two stored.
     EYES     (PartScale.SENSE, true),
     EARS     (PartScale.SENSE, true),
     MOUTH    (PartScale.SENSE, true),
     NOSE     (PartScale.SENSE, true),
     BRAIN    (PartScale.SENSE, true),
 
-    //  身与四肢 -- four grades, named for what undoing them costs.
+    //  Trunk and limbs [身与四肢] -- four grades, named for what undoing them costs.
     TORSO    (PartScale.BODY,  true),
     ARM_LEFT (PartScale.BODY,  true),
     ARM_RIGHT(PartScale.BODY,  true),
     LEG_LEFT (PartScale.BODY,  true),
     LEG_RIGHT(PartScale.BODY,  true),
 
-    //  骨肌肤筋 -- whole-body: not sided, not regional, and never drawn on the figure. They host all
-    //  the same, though: something can live in your bones as readily as in an eye socket.
+    //  Whole-body tissues [骨肌肤筋] -- not sided, not regional, not on the figure; still host.
     BONE     (PartScale.BODY,  true),
     SKIN     (PartScale.BODY,  true),
     MUSCLE   (PartScale.BODY,  true),
@@ -40,8 +36,7 @@ public enum BodyPart implements StringRepresentable, EnumTranslatable {
     public static final Codec<BodyPart> CODEC = StringRepresentable.fromEnum(BodyPart::values);
     private static final String KEY_PREFIX = "customplayer.enum.body.body_part.";
 
-    //  ⚠ The tag is how this mod stays ignorant of what gets installed. A dependent adds its own items
-    //  to customplayer:installable/<part>; nothing here ever names an item.
+    //  ⚠ Tag lets this mod stay ignorant of what installs; a dependent fills installable/<part>.
     private static final String TAG_PREFIX = "installable/";
 
     private final PartScale scale;
@@ -57,17 +52,14 @@ public enum BodyPart implements StringRepresentable, EnumTranslatable {
 
     public PartScale scale() {return scale;}
 
-    //  Whether this part can hold anything at all. ⚠ Separate from whether it can hold it RIGHT NOW --
-    //  that second question is the part's ailment, and the two must not be folded together.
+    //  Whether it can host anything at ALL -- separate from whether it can RIGHT NOW (that is the ailment).
     public boolean installable() {return installable;}
     public TagKey<Item> installTag() {return installTag;}
 
     //  ⚠ A cross-scale pair is unrepresentable, not merely refused: a leg can never read "blind".
     public boolean accepts(Ailment ailment) {return ailment.scale() == scale;}
 
-    //  ⚠ Whether the part has a PLACE on the body, which is a different question from whether it can be
-    //  hurt or host something. Bone and skin are everywhere, so the screen gives them their own row
-    //  rather than pinning them to a spot that would misdescribe them.
+    //  ⚠ Whether the part has a PLACE on the body (bone/skin are everywhere, so no spot) -- see vault.
     public boolean regional() {return this != BONE && this != SKIN && this != MUSCLE && this != SINEW;}
 
     @Override

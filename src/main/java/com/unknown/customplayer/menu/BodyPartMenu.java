@@ -4,8 +4,6 @@ import com.unknown.customplayer.attachment.service.body.InjuryService;
 import com.unknown.customplayer.attachment.service.body.PartStorageService;
 import com.unknown.customplayer.custom.enums.body.BodyPart;
 import com.unknown.customplayer.registry.ModMenus;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,14 +13,12 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-//  One slot per installable body part, laid out ON the figure the screen draws -- the coordinates are
-//  anatomy, not a grid. HEAD hosts nothing, so nine slots, not ten.
+//  One slot per body part, laid out on the figure the screen draws (senses left, trunk/limbs right, the
+//  four whole-body tissues along the bottom). All fourteen host; the part IS the address.
 public class BodyPartMenu extends AbstractContainerMenu {
 
-    //  ⚠ Slot order IS this array's order, and quickMoveStack's ranges depend on it. The screen reads
-    //  the same array for its connector lines, so the two can never disagree about which slot is which.
-    //  All fourteen: every part hosts. ⚠ Order is the layout -- senses down the left, trunk and limbs
-    //  down the right, the four whole-body tissues along the bottom.
+    //  ⚠ Slot order IS this array's order -- quickMoveStack's ranges depend on it, and the screen reads
+    //  the same array, so the two can never disagree about which slot is which.
     public static final BodyPart[] SLOTS = {
             BodyPart.EYES, BodyPart.EARS, BodyPart.NOSE, BodyPart.MOUTH, BodyPart.BRAIN,
             BodyPart.TORSO, BodyPart.ARM_LEFT, BodyPart.ARM_RIGHT,
@@ -32,12 +28,8 @@ public class BodyPartMenu extends AbstractContainerMenu {
 
     public static final int PART_SLOTS = SLOTS.length;
 
-    //  Two columns flanking the figure, then a row underneath. Indexed to match SLOTS; the screen reads
-    //  these same arrays, so a slot and what the screen says about it can never drift apart.
-    //  ⚠ The panel is 222 tall for a reason: at 720p with GUI scale 3 only 240 scaled pixels exist.
-    //  An earlier layout came to 248 and would have run off the bottom of the screen.
-    //  ⚠⚠ There are NO connector lines. Fourteen of them were spaghetti whatever their weight; the
-    //  screen highlights one pair on hover instead, which is stronger exactly when it is wanted.
+    //  Two columns flanking the figure, then a row underneath; indexed to match SLOTS.
+    //  ⚠ Panel is 222 tall (720p/GUI3 has 240 px); ⚠⚠ NO connector lines -- hover highlights a pair. Vault.
     public static final int[] SLOT_X = {
             8, 8, 8, 8, 8,
             152, 152, 152, 152, 152,
@@ -57,8 +49,7 @@ public class BodyPartMenu extends AbstractContainerMenu {
     private final Player player;
     private final SimpleContainer parts = new SimpleContainer(PART_SLOTS);
 
-    //  ⚠ Seeding the container fires the listener; without this the load would immediately save itself
-    //  back, and on the client that would write nothing while still costing a rebuild.
+    //  ⚠ Seeding the container fires the listener; without this, load() would immediately save itself back.
     private boolean loading;
 
     public BodyPartMenu(int id, Inventory inventory) {
@@ -78,9 +69,8 @@ public class BodyPartMenu extends AbstractContainerMenu {
             addSlot(new Slot(inventory, col, INVENTORY_X + col * SLOT, HOTBAR_Y));
         }
 
-        //  ⚠⚠ THE save trigger. Overriding slotsChanged does NOTHING: SimpleContainer.setChanged only
-        //  notifies registered listeners, and AbstractContainerMenu is not a ContainerListener -- so
-        //  that override is never called, and a logout with the menu open eats the deposit.
+        //  ⚠⚠ THE save trigger. Overriding slotsChanged does NOTHING (menu is not a ContainerListener),
+        //  so a logout with the menu open eats the deposit. See vault.
         parts.addListener(container -> save());
         load();
     }
@@ -132,13 +122,9 @@ public class BodyPartMenu extends AbstractContainerMenu {
         return original;
     }
 
-    //  ⚠ One part at a time, and only where it is allowed: moveItemStackTo would happily drop an eye
-    //  implant into a leg, because it never consults mayPlace for a single-item slot.
+    //  ⚠ One part at a time, only where allowed: moveItemStackTo ignores mayPlace for a single-item slot.
     private boolean moveToBody(ItemStack stack) {
-        List<Integer> targets = new ArrayList<>(PART_SLOTS);
-        for (int i = 0; i < PART_SLOTS; i++) targets.add(i);
-
-        for (int i : targets) {
+        for (int i = 0; i < PART_SLOTS; i++) {
             Slot target = slots.get(i);
             if (!target.hasItem() && target.mayPlace(stack)) {
                 target.set(stack.split(1));
@@ -151,9 +137,8 @@ public class BodyPartMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(@NotNull Player who) {return who == player && who.isAlive();}
 
-    //  ⚠ TWO questions, deliberately separate: the tag says whether this ITEM belongs in this part, the
-    //  injury check says whether the part is fit to hold anything right now. Folding them into one
-    //  predicate is how "you cannot install into a blind eye" would quietly become "this item is wrong".
+    //  ⚠ TWO questions kept separate: the tag says whether this ITEM belongs here, the injury check whether
+    //  the part is fit to hold anything now. See vault.
     private class PartSlot extends Slot {
         private final BodyPart part;
 

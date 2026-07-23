@@ -10,10 +10,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.network.codec.StreamCodec;
 
-//  Every part of one body. Sparse -- a healthy, unmarked part is simply absent, and get() never returns
-//  null. A fresh player therefore serializes to nothing at all.
-//  ⚠ This is where an ailment is checked against its part's scale, because this is the only place that
-//  knows both. PartState cannot: it does not know which part it belongs to.
+//  Every part of one body. Sparse -- a healthy, unmarked part is absent and get() never returns null.
+//  ⚠ Ailment scale is checked HERE, the only place that knows both part and state. See vault.
 public record BodyPartData(Map<BodyPart, PartState> parts) {
 
     public static final BodyPartData DEFAULT = new BodyPartData(Map.of());
@@ -29,8 +27,8 @@ public record BodyPartData(Map<BodyPart, PartState> parts) {
         //  EnumMap: stable ordinal order in NBT and on the wire.
         Map<BodyPart, PartState> pruned = new EnumMap<>(BodyPart.class);
         parts.forEach((part, state) -> {
-            //  ⚠ Drops an ailment from the wrong scale -- an edited save or an older jar's constant
-            //  would otherwise leave a leg reading "blind" in the data forever.
+            //  ⚠ Drops an ailment from the wrong scale -- an edited save or older jar could otherwise
+            //  leave a leg reading "blind" forever.
             PartState kept = state.ailment() != null && !part.accepts(state.ailment())
                     ? state.withAilment(null)
                     : state;

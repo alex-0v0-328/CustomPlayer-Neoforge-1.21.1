@@ -7,8 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-//  The only writer of PartStorage.
-//  ⚠ Reads take Player so the screen can use them; writes take ServerPlayer.
+//  The only writer of PartStorage. ⚠ Reads take Player (the screen uses them); writes take ServerPlayer.
 public final class PartStorageService {
 
     private PartStorageService() {}
@@ -24,7 +23,6 @@ public final class PartStorageService {
         store(p, get(p).with(part, stack));
     }
 
-    //  ⚠ Whether an item MAY go in is not asked here -- the slot asks it, because the slot is the only
-    //  place a player-driven placement happens. A command or another mod writing directly is trusted.
+    //  ⚠ Whether an item MAY go in is the slot's question, not this -- a command or mod writing is trusted.
     public static void clear(ServerPlayer p) {store(p, PartStorage.DEFAULT);}
 }

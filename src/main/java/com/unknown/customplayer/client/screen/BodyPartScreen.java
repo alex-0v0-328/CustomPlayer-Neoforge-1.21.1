@@ -16,16 +16,13 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-//  A blocky figure drawn entirely with g.fill -- no texture anywhere, so it is sharp at every GUI scale.
-//  ⚠⚠ NO connector lines. Fourteen slots pointing at fourteen targets is spaghetti at any line weight;
-//  hovering either a slot or a region highlights the pair instead. Nothing is drawn until it is wanted,
-//  and then exactly one thing is.
+//  A blocky figure drawn entirely with g.fill -- no texture, so it is sharp at every GUI scale.
+//  ⚠⚠ NO connector lines; hovering a slot or a region highlights the pair instead. See vault.
 public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
 
     private record Box(int x1, int y1, int x2, int y2) {}
 
-    //  ⚠ BRAIN is drawn as the SKULL. There is no HEAD part, and inventing a decorative one just to have
-    //  something to hang the senses on would put a region on screen that no data backs.
+    //  ⚠ BRAIN is drawn as the SKULL -- there is no HEAD part. See vault.
     private static final Map<BodyPart, Box> FIGURE = new EnumMap<>(BodyPart.class);
 
     static {
@@ -42,16 +39,16 @@ public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
         FIGURE.put(BodyPart.MOUTH,     new Box(84, 32,  92,  33));
     }
 
-    //  ⚠⚠ Hit-testing order is the REVERSE of drawing order: the senses are painted on top of the skull,
-    //  so they must be asked first. Using BodyPart.values() would answer "brain" for every pixel of an eye.
+    //  ⚠⚠ Hit-testing order is the REVERSE of drawing order: senses are painted on top of the skull, so
+    //  they must be asked first, or every eye pixel answers "brain". See vault.
     private static final BodyPart[] HIT_ORDER = {
             BodyPart.EARS, BodyPart.EYES, BodyPart.NOSE, BodyPart.MOUTH,
             BodyPart.BRAIN, BodyPart.TORSO, BodyPart.ARM_LEFT, BodyPart.ARM_RIGHT,
             BodyPart.LEG_LEFT, BodyPart.LEG_RIGHT,
     };
 
-    //  ⚠ Bone, skin, muscle and sinew are everywhere, so they get a tint bar under their own slot rather
-    //  than a spot on the figure. Pinning "bone" to one place would misdescribe what it is.
+    //  ⚠ The four whole-body parts get a tint bar under their slot, not a spot on the figure -- pinning
+    //  "bone" to one place would misdescribe it. See vault.
     private static final int TINT_BAR_H = 3;
     private static final int TINT_BAR_GAP = 2;
 
@@ -62,8 +59,8 @@ public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
     private static final int ACCENT = 0xFF7FB2E5;
     private static final int HIGHLIGHT = 0xFFFFFFFF;
 
-    //  ⚠ Status colours are the IDENTITY of a condition, not a judgement of a number -- there are no
-    //  numbers here. Healthy is the accent; each grade darkens or reddens what it owns.
+    //  ⚠ Status colours are IDENTITY of a condition, not a judgement of a number (there are none here).
+    //  Healthy is the accent; each grade darkens or reddens what it owns. See vault.
     private static final int HEALTHY = 0x807FB2E5;
     private static final int OUTLINE = 0x40FFFFFF;
 
@@ -125,8 +122,8 @@ public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
         }
     }
 
-    //  ⚠ One region can only be one colour, so this ordinal-to-shade mapping is where severity is read.
-    //  The two scales share the ramp: worse is darker and redder, whichever ladder it came from.
+    //  ⚠ One region is one colour, so this ordinal-to-shade map is where severity is read; both scales
+    //  share the ramp (worse = darker/redder).
     private int tint(BodyPart part) {
         Ailment ailment = BodyPartService.state(minecraft.player, part).ailment();
         if (ailment == null) return HEALTHY;
@@ -140,8 +137,8 @@ public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
         };
     }
 
-    //  Which part the cursor means, from EITHER side -- a slot or a region. ⚠ The slot is asked first:
-    //  a whole-body slot has no region at all, and the figure must not answer for it.
+    //  Which part the cursor means, from either side. ⚠ The slot is asked first -- a whole-body slot has
+    //  no region, and the figure must not answer for it.
     private @Nullable BodyPart focused(int mouseX, int mouseY) {
         for (int i = 0; i < BodyPartMenu.PART_SLOTS; i++) {
             int sx = BodyPartMenu.SLOT_X[i];
@@ -169,9 +166,8 @@ public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
         renderTooltip(g, mouseX, mouseY);
     }
 
-    //  Hovering either side names the part and says what is wrong with it.
-    //  ⚠ Runs BEFORE renderTooltip, so a hovered slot's item tooltip still wins -- an item under the
-    //  cursor is the more specific answer to "what am I pointing at".
+    //  Hovering either side names the part and what is wrong. ⚠ Before renderTooltip, so a hovered item's
+    //  own tooltip still wins.
     private void renderPartTooltip(GuiGraphics g, int mouseX, int mouseY) {
         if (hoveredSlot != null && hoveredSlot.hasItem()) return;
 

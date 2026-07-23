@@ -6,9 +6,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-//  Two independent counts a body part carries for one key. What the key means, and whether the two ever
-//  convert into each other, belong to the mod that owns the key -- this one only stores them.
-//  ⚠ Every field optionalFieldOf, so a later field cannot invalidate an old save.
+//  Two independent counts a part carries for one key. What the key means -- and whether the two ever
+//  convert -- belongs to the mod that owns it. ⚠ Every field optionalFieldOf, so old saves stay valid.
 public record PartMark(long mark, long speck) {
 
     public static final PartMark DEFAULT = new PartMark(0L, 0L);

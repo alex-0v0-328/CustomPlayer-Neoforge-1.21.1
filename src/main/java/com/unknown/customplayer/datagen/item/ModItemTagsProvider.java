@@ -12,11 +12,8 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-//  Writes one EMPTY tag per installable part.
-//  ⚠⚠ Empty is the point. This mod owns no items and must never name one; the tags exist so a dependent
-//  has a documented, discoverable place to add its own. A tag nobody fills simply matches nothing, and
-//  tags merge across mods by id -- guzhenren writes data/customplayer/tags/item/installable/eyes.json
-//  in ITS OWN jar and both files are combined at load.
+//  Writes one EMPTY tag per installable part. ⚠⚠ Empty is the point: this mod owns no items and must
+//  never name one; a dependent fills installable/<part> in its own jar. See vault.
 public class ModItemTagsProvider extends ItemTagsProvider {
 
     public ModItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,

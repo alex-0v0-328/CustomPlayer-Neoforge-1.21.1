@@ -4,15 +4,12 @@ import com.mojang.serialization.Codec;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
-//  What is wrong with a part, as ONE value on an ordered ladder -- never a set. A leg cannot be both
-//  strained and crippled; they are two readings of the same axis, and the worse one is the answer.
-//  ⚠ Ordinal order within each scale IS the severity order. worseThan() reads it, and nothing else may.
+//  What is wrong with a part, as ONE value on an ordered ladder -- never a set. The worse reading wins.
+//  ⚠ Ordinal order within each scale IS the severity order; worseThan() reads it and nothing else may.
 public enum Ailment implements StringRepresentable {
 
     //region SENSE -- 眼耳口鼻脑
-    //  ⚠ Degree ONE of this scale is deliberately absent. 眩光 / 耳鸣 / 沙哑 / 鼻塞 / 眩晕 are short
-    //  timed debuffs, so they are MobEffects: vanilla already ticks them down, syncs them, shows an
-    //  icon and clears them on death. Storing a countdown here would re-implement all four badly.
+    //  ⚠ Degree one (眩光/耳鸣/沙哑/鼻塞/眩晕) is absent: those are MobEffects, not stored here. See vault.
     LOST(PartScale.SENSE),
     DESTROYED(PartScale.SENSE),
     //endregion
@@ -33,15 +30,13 @@ public enum Ailment implements StringRepresentable {
 
     public PartScale scale() {return scale;}
 
-    //  ⚠ Only meaningful within one scale. Comparing across them is a bug the caller must not commit;
-    //  BodyPart.accepts already makes a cross-scale pair unrepresentable, so it cannot arise from data.
+    //  ⚠ Only meaningful within one scale; a cross-scale pair is already unrepresentable in the data.
     public boolean worseThan(Ailment other) {
         return other == null || (scale == other.scale && ordinal() > other.ordinal());
     }
 
-    //  ⚠ TWO keying schemes, and the split is the point. A BODY grade is the same word on all nine
-    //  parts (劳 is 劳 whether it is a leg or the sinews), so one key serves. A SENSE loss is a
-    //  different word on every part -- 盲 / 聋 / 哑 / 痈 / 呆 -- so it is keyed per part.
+    //  ⚠ TWO keying schemes: a BODY grade is one shared word (劳); a SENSE loss differs per part
+    //  (盲/聋/哑/痈/呆), so it is keyed per part. See vault.
     public String getTranslationKey(BodyPart part) {
         return scale == PartScale.BODY
                 ? KEY_PREFIX + getSerializedName()

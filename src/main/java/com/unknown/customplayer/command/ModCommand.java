@@ -23,10 +23,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
-//  /customplayer -- this mod's own root. ⚠ A dependent mod adds ITS own root; it never hangs a branch
-//  here, and this mod never hangs one on somebody else's.
-//  Verbs follow one rule so a new leaf is never a guess: raw count -> set/add/sub, set membership ->
-//  apply/heal/clear, one-shot -> bare.
+//  /customplayer -- this mod's own root. ⚠ A dependent adds ITS own root; never a branch here. See vault.
+//  Verbs: raw count -> set/add/sub, set membership -> apply/heal/clear, one-shot -> bare.
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID)
 public final class ModCommand {
 
@@ -36,8 +34,6 @@ public final class ModCommand {
     private static final String ALIAS = "cpl";
 
     private static final String ARG_TARGETS = "targets";
-    private static final String ARG_PART = "part";
-    private static final String ARG_INJURY = "injury";
     private static final String ARG_KEY = "key";
     private static final String ARG_VALUE = "value";
 
@@ -62,14 +58,12 @@ public final class ModCommand {
         for (BodyPart part : BodyPart.values()) {
             var partNode = Commands.literal(part.getSerializedName());
             for (Ailment grade : Ailment.values()) {
-                //  ⚠ Only the pairs that can exist are even offered -- a cross-scale pair is not a
-                //  refusal to explain, it is a branch that was never built. A leg has no "blind".
+                //  ⚠ Only the pairs that can exist are offered -- a leg has no "blind" branch at all.
                 if (!part.accepts(grade)) continue;
                 partNode.then(withTargets(Commands.literal(grade.getSerializedName()),
                         context -> apply(context, p -> InjuryService.apply(p, part, grade))));
             }
-            //  ⚠ A bare grade SETS, it does not worsen: an operator asking for 劳 on a ruined leg means
-            //  劳. worsen() is for injury rules, which fire without anyone deciding.
+            //  ⚠ A bare grade SETS, not worsens -- worsen() is for rules that fire unbidden. See vault.
             partNode.then(withTargets(Commands.literal("clear"),
                     context -> apply(context, p -> InjuryService.heal(p, part))));
             node.then(partNode);
@@ -80,8 +74,7 @@ public final class ModCommand {
     //endregion
 
     //region mark
-    //  ⚠ The key is a free ResourceLocation, not an enum: this mod does not know what marks exist, and
-    //  a dependent must be able to use its own without a code change here.
+    //  ⚠ The key is a free ResourceLocation, not an enum: a dependent uses its own without a code change.
     private static ArgumentBuilder<CommandSourceStack, ?> mark() {
         var node = Commands.literal("mark");
         for (BodyPart part : BodyPart.values()) {
@@ -121,16 +114,14 @@ public final class ModCommand {
     }
     //endregion
 
-    //  Empties every installed slot. ⚠ Deletes what was in them -- there is no "drop it at your feet"
-    //  concept in this mod, and inventing one for an operator command would be the wrong place to.
+    //  Empties every installed slot. ⚠ Deletes what was in them -- no "drop at feet" concept here.
     private static ArgumentBuilder<CommandSourceStack, ?> uninstall() {
         return withTargets(Commands.literal("uninstall"),
                 context -> apply(context, PartStorageService::clear));
     }
 
     //region plumbing
-    //  Every leaf works on self or [targets]. ⚠ The optional-targets node hangs off the LEAF, so a
-    //  bare command means "me" without an extra branch to keep in step.
+    //  Every leaf works on self or [targets]. ⚠ The optional-targets node hangs off the LEAF. See vault.
     private static ArgumentBuilder<CommandSourceStack, ?> withTargets(
             ArgumentBuilder<CommandSourceStack, ?> node, Command<CommandSourceStack> action) {
         return node.executes(action).then(
