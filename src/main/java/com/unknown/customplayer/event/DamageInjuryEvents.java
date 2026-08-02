@@ -12,7 +12,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
-//  Where harm becomes injury. ⚠ FALL is one hit, BURN one point per tick -- measured differently. Vault.
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID)
 public final class DamageInjuryEvents {
 
@@ -21,7 +20,6 @@ public final class DamageInjuryEvents {
     private static final List<BodyPart> LEGS = List.of(BodyPart.LEG_LEFT, BodyPart.LEG_RIGHT);
     private static final int TICKS_PER_SECOND = 20;
 
-    //  ⚠ Post, not Pre: grade on what landed after armour/resistance, not the raw incoming hit.
     @SubscribeEvent
     public static void onDamage(LivingDamageEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
@@ -30,8 +28,6 @@ public final class DamageInjuryEvents {
         InjuryRules.fire(player, InjuryRules.FALL, event.getNewDamage(), LEGS);
     }
 
-    //  Burning is graded on how LONG, so it needs its own counter -- unsynced/unserialized, reset with
-    //  the fire (a relog is indistinguishable). See vault.
     @SubscribeEvent
     public static void onEntityTick(EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
@@ -43,7 +39,6 @@ public final class DamageInjuryEvents {
         }
 
         burn[0]++;
-        //  Once a second, not every tick -- else 20 identical packets on the second it crosses.
         if (burn[0] % TICKS_PER_SECOND != 0) return;
 
         InjuryRules.fire(player, InjuryRules.BURN, burn[0] / (float) TICKS_PER_SECOND, List.of());

@@ -13,8 +13,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
-//  What is true of one body part: at most ONE ailment, plus whatever it has accumulated.
-//  ⚠ One value not a set; scale validation lives in BodyPartData (only it knows the part). See vault.
 public record PartState(@Nullable Ailment ailment, Map<ResourceLocation, PartMark> marks) {
 
     public static final PartState DEFAULT = new PartState(null, Map.of());
@@ -31,7 +29,6 @@ public record PartState(@Nullable Ailment ailment, Map<ResourceLocation, PartMar
             PartState::new);
 
     public PartState {
-        //  TreeMap: ResourceLocation sorts, and an unstable key order makes every save look changed.
         Map<ResourceLocation, PartMark> pruned = new TreeMap<>();
         marks.forEach((key, value) -> {if (!value.isDefault()) pruned.put(key, value);});
         marks = Collections.unmodifiableMap(pruned);
@@ -43,7 +40,6 @@ public record PartState(@Nullable Ailment ailment, Map<ResourceLocation, PartMar
 
     public PartState withAilment(@Nullable Ailment value) {return new PartState(value, marks);}
 
-    //  ⚠ Never downgrades -- rules fire on every qualifying hit and would otherwise heal by accident.
     public PartState worsened(Ailment value) {
         return value.worseThan(ailment) ? withAilment(value) : this;
     }

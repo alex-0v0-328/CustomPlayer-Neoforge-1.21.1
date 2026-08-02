@@ -12,7 +12,6 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-//  ⚠ One payload, and that is the ceiling. See OpenBodyPayload for why this one is allowed.
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID)
 public final class ModPayloads {
 
@@ -27,8 +26,6 @@ public final class ModPayloads {
         registrar.playToServer(OpenBodyPayload.TYPE, OpenBodyPayload.STREAM_CODEC, ModPayloads::openBody);
     }
 
-    //  ⚠ PayloadRegistrar defaults to HandlerThread.MAIN in NeoForge 21.1 -- already on the server thread,
-    //  no enqueueWork. See vault.
     private static void openBody(OpenBodyPayload payload, IPayloadContext context) {
         if (!(context.player() instanceof ServerPlayer player)) return;
 

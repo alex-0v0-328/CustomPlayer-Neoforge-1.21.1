@@ -4,12 +4,9 @@ import com.mojang.serialization.Codec;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
-//  What is wrong with a part, as ONE value on an ordered ladder -- never a set. The worse reading wins.
-//  ⚠ Ordinal order within each scale IS the severity order; worseThan() reads it and nothing else may.
 public enum Ailment implements StringRepresentable {
 
     //region SENSE -- 眼耳口鼻脑
-    //  ⚠ Degree one (眩光/耳鸣/沙哑/鼻塞/眩晕) is absent: those are MobEffects, not stored here. See vault.
     LOST(PartScale.SENSE),
     DESTROYED(PartScale.SENSE),
     //endregion
@@ -30,13 +27,10 @@ public enum Ailment implements StringRepresentable {
 
     public PartScale scale() {return scale;}
 
-    //  ⚠ Only meaningful within one scale; a cross-scale pair is already unrepresentable in the data.
     public boolean worseThan(Ailment other) {
         return other == null || (scale == other.scale && ordinal() > other.ordinal());
     }
 
-    //  ⚠ TWO keying schemes: a BODY grade is one shared word (劳); a SENSE loss differs per part
-    //  (盲/聋/哑/痈/呆), so it is keyed per part. See vault.
     public String getTranslationKey(BodyPart part) {
         return scale == PartScale.BODY
                 ? KEY_PREFIX + getSerializedName()

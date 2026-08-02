@@ -5,8 +5,6 @@ import net.minecraft.client.KeyMapping;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import org.lwjgl.glfw.GLFW;
 
-//  ⚠ R is unbound in vanilla 1.21.1, which is why it is free to take -- and it is rebindable anyway,
-//  so a pack that wants it back loses nothing.
 public final class ModKeyMappings {
 
     private ModKeyMappings() {}

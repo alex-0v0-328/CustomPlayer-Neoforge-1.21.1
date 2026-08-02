@@ -13,8 +13,6 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-//  Everything the client registers, plus the one key this mod owns.
-//  NeoForge routes each event to the right bus, so all can sit here. Split when there is a reason.
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID, value = Dist.CLIENT)
 public final class ClientEvents {
 
@@ -30,7 +28,6 @@ public final class ClientEvents {
         event.register(ModMenus.BODY_PART_MENU.get(), BodyPartScreen::new);
     }
 
-    //  ⚠ The key only ASKS -- opening the menu is the server's; setScreen here would desync. Hence the payload.
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();

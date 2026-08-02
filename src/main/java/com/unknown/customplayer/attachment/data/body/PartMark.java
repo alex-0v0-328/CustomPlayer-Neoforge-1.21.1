@@ -6,8 +6,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-//  Two independent counts a part carries for one key. What the key means -- and whether the two ever
-//  convert -- belongs to the mod that owns it. ⚠ Every field optionalFieldOf, so old saves stay valid.
 public record PartMark(long mark, long speck) {
 
     public static final PartMark DEFAULT = new PartMark(0L, 0L);
@@ -27,7 +25,6 @@ public record PartMark(long mark, long speck) {
         speck = Math.max(0L, speck);
     }
 
-    //  Indistinguishable from "absent" -- that is what lets PartState stay sparse.
     public boolean isDefault() {return mark == 0L && speck == 0L;}
     public PartMark withMark(long v) {return new PartMark(v, speck);}
     public PartMark withSpeck(long v) {return new PartMark(mark, v);}

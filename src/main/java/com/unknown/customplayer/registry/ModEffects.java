@@ -9,7 +9,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-//  Degree one of the sense scale, one effect per sense. ⚠ All five are markers -- see SenseDebuffEffect.
 public final class ModEffects {
 
     private ModEffects() {}
@@ -17,7 +16,6 @@ public final class ModEffects {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS =
             DeferredRegister.create(Registries.MOB_EFFECT, CustomPlayer.MOD_ID);
 
-    //  One hue per sense, so five icons in a row stay tellable apart at a glance.
     private static final int GLARE_COLOR = 0xF2E8B0;
     private static final int TINNITUS_COLOR = 0xB8C7E0;
     private static final int HOARSE_COLOR = 0xD9A6A6;

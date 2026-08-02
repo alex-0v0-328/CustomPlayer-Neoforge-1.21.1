@@ -13,12 +13,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-//  One slot per body part, laid out on the figure the screen draws (senses left, trunk/limbs right, the
-//  four whole-body tissues along the bottom). All fourteen host; the part IS the address.
 public class BodyPartMenu extends AbstractContainerMenu {
 
-    //  ⚠ Slot order IS this array's order -- quickMoveStack's ranges depend on it, and the screen reads
-    //  the same array, so the two can never disagree about which slot is which.
     public static final BodyPart[] SLOTS = {
             BodyPart.EYES, BodyPart.EARS, BodyPart.NOSE, BodyPart.MOUTH, BodyPart.BRAIN,
             BodyPart.TORSO, BodyPart.ARM_LEFT, BodyPart.ARM_RIGHT,
@@ -28,8 +24,6 @@ public class BodyPartMenu extends AbstractContainerMenu {
 
     public static final int PART_SLOTS = SLOTS.length;
 
-    //  Two columns flanking the figure, then a row underneath; indexed to match SLOTS.
-    //  ⚠ Panel is 222 tall (720p/GUI3 has 240 px); ⚠⚠ NO connector lines -- hover highlights a pair. Vault.
     public static final int[] SLOT_X = {
             8, 8, 8, 8, 8,
             152, 152, 152, 152, 152,
@@ -49,7 +43,6 @@ public class BodyPartMenu extends AbstractContainerMenu {
     private final Player player;
     private final SimpleContainer parts = new SimpleContainer(PART_SLOTS);
 
-    //  ⚠ Seeding the container fires the listener; without this, load() would immediately save itself back.
     private boolean loading;
 
     public BodyPartMenu(int id, Inventory inventory) {
@@ -69,8 +62,6 @@ public class BodyPartMenu extends AbstractContainerMenu {
             addSlot(new Slot(inventory, col, INVENTORY_X + col * SLOT, HOTBAR_Y));
         }
 
-        //  ⚠⚠ THE save trigger. Overriding slotsChanged does NOTHING (menu is not a ContainerListener),
-        //  so a logout with the menu open eats the deposit. See vault.
         parts.addListener(container -> save());
         load();
     }
@@ -85,7 +76,6 @@ public class BodyPartMenu extends AbstractContainerMenu {
         loading = false;
     }
 
-    //  Writes on every change, not only on close -- a crash mid-session must not eat what was installed.
     private void save() {
         if (loading || !(player instanceof ServerPlayer server)) return;
         for (int i = 0; i < PART_SLOTS; i++) {
@@ -99,7 +89,6 @@ public class BodyPartMenu extends AbstractContainerMenu {
         super.removed(who);
     }
 
-    //  Shift-click moves between the body and the pack, and never into a slot that would refuse it.
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player who, int index) {
         Slot slot = slots.get(index);
@@ -122,7 +111,6 @@ public class BodyPartMenu extends AbstractContainerMenu {
         return original;
     }
 
-    //  ⚠ One part at a time, only where allowed: moveItemStackTo ignores mayPlace for a single-item slot.
     private boolean moveToBody(ItemStack stack) {
         for (int i = 0; i < PART_SLOTS; i++) {
             Slot target = slots.get(i);
@@ -137,8 +125,6 @@ public class BodyPartMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(@NotNull Player who) {return who == player && who.isAlive();}
 
-    //  ⚠ TWO questions kept separate: the tag says whether this ITEM belongs here, the injury check whether
-    //  the part is fit to hold anything now. See vault.
     private class PartSlot extends Slot {
         private final BodyPart part;
 

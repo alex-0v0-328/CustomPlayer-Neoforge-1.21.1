@@ -12,7 +12,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
-//  ⚠ src/generated/resources is a source set: everything written here must be committed.
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID)
 public final class DataGenerators {
 
@@ -28,8 +27,6 @@ public final class DataGenerators {
         generator.addProvider(event.includeServer(), new ModItemTagsProvider(
                 output, event.getLookupProvider(), event.getExistingFileHelper()));
 
-        //  ⚠ The damage type must be written BEFORE its tags: the tag provider resolves the key against
-        //  the registry the provider above it contributes.
         ModDamageTypeProvider damageTypes = new ModDamageTypeProvider(output, event.getLookupProvider());
         generator.addProvider(event.includeServer(), damageTypes);
         generator.addProvider(event.includeServer(), new ModDamageTypeTagsProvider(

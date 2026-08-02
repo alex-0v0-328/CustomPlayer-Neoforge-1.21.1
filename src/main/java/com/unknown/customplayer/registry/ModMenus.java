@@ -9,7 +9,6 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-//  ⚠ The menu carries no extra data on open -- the body it shows is always the opener's own. See vault.
 public final class ModMenus {
 
     private ModMenus() {}

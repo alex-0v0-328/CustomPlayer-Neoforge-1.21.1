@@ -8,7 +8,6 @@ import com.unknown.customplayer.custom.enums.body.BodyPart;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
-//  ⚠ Same key order and the same value column as the en_us provider, so the two diff line for line.
 public class ZhCnLanguageProvider extends LanguageProvider {
 
     public ZhCnLanguageProvider(PackOutput output) {
@@ -48,8 +47,6 @@ public class ZhCnLanguageProvider extends LanguageProvider {
         add(BodyPart.EYES, Ailment.LOST,                       "盲");
         add(BodyPart.EARS, Ailment.LOST,                       "聋");
         add(BodyPart.MOUTH, Ailment.LOST,                      "哑");
-        //  ⚠ 痈 is his word and it is CORRECT: 新华字典 records an old sense of losing one's smell.
-        //  Verified 2026-07-23 after I wrongly flagged it as a copy-paste slip. Do not "fix" it.
         add(BodyPart.NOSE, Ailment.LOST,                       "痈");
         add(BodyPart.BRAIN, Ailment.LOST,                      "呆");
 

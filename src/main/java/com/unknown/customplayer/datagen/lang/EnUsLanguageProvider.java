@@ -8,15 +8,12 @@ import com.unknown.customplayer.custom.enums.body.BodyPart;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
-//  ⚠ Aligned tables on purpose: the value column starts at the same place in both providers, so the two
-//  files diff against each other line for line.
 public class EnUsLanguageProvider extends LanguageProvider {
 
     public EnUsLanguageProvider(PackOutput output) {
         super(output, CustomPlayer.MOD_ID, "en_us");
     }
 
-    //  Takes the constant, never its key -- a renamed constant then breaks the build instead of the game.
     private void add(EnumTranslatable value, String text) {add(value.getTranslationKey(), text);}
     private void add(BodyPart part, Ailment grade, String text) {add(grade.getTranslationKey(part), text);}
 
@@ -50,8 +47,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
         add(BodyPart.EYES, Ailment.LOST,                       "Blind");
         add(BodyPart.EARS, Ailment.LOST,                       "Deaf");
         add(BodyPart.MOUTH, Ailment.LOST,                      "Mute");
-        //  ⚠ NOT a typo and NOT a skin abscess: 痈 carries an old sense of "lost smell" in 新华字典.
-        //  Checked 2026-07-23. Do not "correct" it to a modern reading.
         add(BodyPart.NOSE, Ailment.LOST,                       "Anosmic");
         add(BodyPart.BRAIN, Ailment.LOST,                      "Senseless");
 

@@ -9,8 +9,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
 
-//  A library mod: it defines the player's body and nothing else -- what a mark MEANS and what installs
-//  are the dependent's. ⚠ Every registry holder registers from here, so load order is readable.
 @Mod(CustomPlayer.MOD_ID)
 public class CustomPlayer {
 

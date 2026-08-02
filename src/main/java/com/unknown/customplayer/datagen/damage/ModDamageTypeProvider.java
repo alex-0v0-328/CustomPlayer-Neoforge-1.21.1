@@ -12,12 +12,10 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraft.world.damagesource.DamageScaling;
 import net.minecraft.world.damagesource.DamageType;
 
-//  Writes data/customplayer/damage_type/**. A DataProvider, so it does not exist at runtime.
 public class ModDamageTypeProvider extends DatapackBuiltinEntriesProvider {
 
     private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(Registries.DAMAGE_TYPE, context -> context.register(ModDamageTypes.BRAIN_DESTROYED,
-                    //  ⚠ exhaustion 0: this is not exertion, and a corpse has no appetite.
                     new DamageType("customplayer.brain_destroyed", DamageScaling.NEVER, 0.0F)));
 
     public ModDamageTypeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

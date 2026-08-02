@@ -14,8 +14,6 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-//  ⚠ "Bypasses armour" is a TAG, not a field on DamageType -- the record carries only scaling, message
-//  id and exhaustion. Everything about what can blunt a hit lives here.
 public class ModDamageTypeTagsProvider extends TagsProvider<DamageType> {
 
     public ModDamageTypeTagsProvider(PackOutput output,
@@ -26,8 +24,6 @@ public class ModDamageTypeTagsProvider extends TagsProvider<DamageType> {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        //  A destroyed brain is an ending, not a hit -- nothing blunts it. ⚠ Creative is NOT covered and
-        //  must not be: vanilla's own invulnerability still applies. See vault.
         unstoppable(DamageTypeTags.BYPASSES_ARMOR);
         unstoppable(DamageTypeTags.BYPASSES_EFFECTS);
         unstoppable(DamageTypeTags.BYPASSES_ENCHANTMENTS);

@@ -23,8 +23,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
-//  /customplayer -- this mod's own root. ⚠ A dependent adds ITS own root; never a branch here. See vault.
-//  Verbs: raw count -> set/add/sub, set membership -> apply/heal/clear, one-shot -> bare.
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID)
 public final class ModCommand {
 
@@ -39,7 +37,6 @@ public final class ModCommand {
 
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
-        //  ⚠ The alias shares the SAME node, so the two can never drift apart.
         var root = event.getDispatcher().register(Commands.literal(ROOT)
                 .requires(source -> source.hasPermission(2))
                 .then(ailment())
@@ -52,18 +49,15 @@ public final class ModCommand {
     }
 
     //region ailment
-    //  /customplayer ailment <part> <grade> [targets]  ·  ... <part> clear  ·  ... clear
     private static ArgumentBuilder<CommandSourceStack, ?> ailment() {
         var node = Commands.literal("ailment");
         for (BodyPart part : BodyPart.values()) {
             var partNode = Commands.literal(part.getSerializedName());
             for (Ailment grade : Ailment.values()) {
-                //  ⚠ Only the pairs that can exist are offered -- a leg has no "blind" branch at all.
                 if (!part.accepts(grade)) continue;
                 partNode.then(withTargets(Commands.literal(grade.getSerializedName()),
                         context -> apply(context, p -> InjuryService.apply(p, part, grade))));
             }
-            //  ⚠ A bare grade SETS, not worsens -- worsen() is for rules that fire unbidden. See vault.
             partNode.then(withTargets(Commands.literal("clear"),
                     context -> apply(context, p -> InjuryService.heal(p, part))));
             node.then(partNode);
@@ -74,7 +68,6 @@ public final class ModCommand {
     //endregion
 
     //region mark
-    //  ⚠ The key is a free ResourceLocation, not an enum: a dependent uses its own without a code change.
     private static ArgumentBuilder<CommandSourceStack, ?> mark() {
         var node = Commands.literal("mark");
         for (BodyPart part : BodyPart.values()) {
@@ -114,14 +107,12 @@ public final class ModCommand {
     }
     //endregion
 
-    //  Empties every installed slot. ⚠ Deletes what was in them -- no "drop at feet" concept here.
     private static ArgumentBuilder<CommandSourceStack, ?> uninstall() {
         return withTargets(Commands.literal("uninstall"),
                 context -> apply(context, PartStorageService::clear));
     }
 
     //region plumbing
-    //  Every leaf works on self or [targets]. ⚠ The optional-targets node hangs off the LEAF. See vault.
     private static ArgumentBuilder<CommandSourceStack, ?> withTargets(
             ArgumentBuilder<CommandSourceStack, ?> node, Command<CommandSourceStack> action) {
         return node.executes(action).then(
@@ -145,7 +136,6 @@ public final class ModCommand {
         }
     }
 
-    //  ⚠ Spelled out, not PlayerOp -- this project does not abbreviate interface names.
     @FunctionalInterface
     private interface PlayerOperation {
         void apply(ServerPlayer player);
