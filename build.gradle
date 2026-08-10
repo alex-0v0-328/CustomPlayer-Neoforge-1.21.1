@@ -107,6 +107,13 @@ neoForge {
             sourceSet(sourceSets.main)
         }
     }
+
+    // Plain JUnit over the pure logic: the two scales, the records' own clamping and pruning,
+    // and the injury rule table. Anything needing a live world belongs in a GameTest instead.
+    unitTest {
+        enable()
+        testedMod = mods."${mod_id}"
+    }
 }
 
 // Sets up a dependency configuration called 'localRuntime'.
@@ -139,6 +146,18 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
+    testImplementation platform("org.junit:junit-bom:${junit_version}")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+    testLogging {
+        events 'failed'
+        exceptionFormat 'full'
+    }
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

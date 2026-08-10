@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.Nullable;
 
 public final class InjuryRules {
 
@@ -40,11 +41,15 @@ public final class InjuryRules {
         return RULES.getOrDefault(channel, List.of());
     }
 
-    public static void fire(ServerPlayer player, String channel, float measure, List<BodyPart> candidates) {
-        InjuryRule worst = rules(channel).stream()
+    public static @Nullable InjuryRule worstTriggered(String channel, float measure) {
+        return rules(channel).stream()
                 .filter(rule -> rule.triggers(measure))
                 .max(Comparator.comparingInt(rule -> rule.ailment().ordinal()))
                 .orElse(null);
+    }
+
+    public static void fire(ServerPlayer player, String channel, float measure, List<BodyPart> candidates) {
+        InjuryRule worst = worstTriggered(channel, measure);
         if (worst == null) return;
 
         List<BodyPart> parts = worst.parts().isEmpty() ? candidates : worst.parts();
