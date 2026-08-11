@@ -9,6 +9,15 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Every part a body has. There is deliberately no head: the skull the screen draws is the brain.
+ *
+ * <p>⚠ Each part's install tag ships EMPTY, and empty is the point -- this mod owns no items and must
+ * never name one. A dependent fills those tags from its own jar.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public enum BodyPart implements StringRepresentable, EnumTranslatable {
 
     EYES     (PartScale.SENSE, true),

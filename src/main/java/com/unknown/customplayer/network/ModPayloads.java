@@ -12,6 +12,15 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
+/**
+ * Registers the one payload and handles it on the server.
+ *
+ * <p>⚠ The registrar already hands this to the server thread in this NeoForge version, so nothing
+ * here needs to enqueue work of its own.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID)
 public final class ModPayloads {
 

@@ -9,6 +9,15 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
 
+/**
+ * Mod entry point of a library mod: it defines the player's body and nothing else.
+ *
+ * <p>⚠ What a mark means, and what may be installed into a part, are the dependent mod's business.
+ * This jar owns no items at all and must never name one.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 @Mod(CustomPlayer.MOD_ID)
 public class CustomPlayer {
 

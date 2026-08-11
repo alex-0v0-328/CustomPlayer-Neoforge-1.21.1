@@ -12,6 +12,15 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
+/**
+ * Turns harm into injury: a fall is graded on the hit, burning on the seconds spent alight.
+ *
+ * <p>⚠ The two channels measure different things deliberately, so a threshold is a bare number and
+ * each channel names its own unit. Burning fires once a second, never once a tick.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID)
 public final class DamageInjuryEvents {
 

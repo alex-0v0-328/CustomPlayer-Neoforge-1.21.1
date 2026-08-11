@@ -8,6 +8,16 @@ import com.unknown.customplayer.custom.enums.body.BodyPart;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
+/**
+ * The Chinese strings, written as an aligned table beside the English one.
+ *
+ * <p>⚠ An ailment is keyed two ways: a body grade is one shared word, while a lost sense reads
+ * differently per part and is therefore keyed per part.
+ *
+ * @author Alex
+ * @since 1.0.0
+ * @see EnUsLanguageProvider
+ */
 public class ZhCnLanguageProvider extends LanguageProvider {
 
     public ZhCnLanguageProvider(PackOutput output) {

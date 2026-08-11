@@ -10,6 +10,15 @@ import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.network.codec.StreamCodec;
 
+/**
+ * What condition each part of the body is in, sparse: a healthy, unmarked part is simply absent.
+ *
+ * <p>⚠ The scale check lives here because this is the only place knowing both the part and its state.
+ * The compact constructor drops a cross-scale pair, so a blind leg is unrepresentable, not refused.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public record BodyPartData(Map<BodyPart, PartState> parts) {
 
     public static final BodyPartData DEFAULT = new BodyPartData(Map.of());

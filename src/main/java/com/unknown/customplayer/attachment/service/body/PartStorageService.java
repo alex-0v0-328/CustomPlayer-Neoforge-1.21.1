@@ -7,6 +7,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+/**
+ * The only writer of what is installed in a part.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public final class PartStorageService {
 
     private PartStorageService() {}

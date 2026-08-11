@@ -4,6 +4,15 @@ import com.mojang.serialization.Codec;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * What can be wrong with a part, on either of the two scales.
+ *
+ * <p>⚠ Ordinal order within a scale IS the severity order, so reordering the constants silently
+ * reorders severity. Only {@code worseThan()} may depend on that.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public enum Ailment implements StringRepresentable {
 
     //region SENSE -- 眼耳口鼻脑

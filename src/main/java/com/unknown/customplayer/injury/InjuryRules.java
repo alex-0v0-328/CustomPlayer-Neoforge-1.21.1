@@ -11,6 +11,15 @@ import java.util.Map;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * The open table of injury rules, which a dependent mod extends under its own channel.
+ *
+ * <p>⚠ Firing applies only the WORST qualifying rule. Running them all would push a lighter ailment
+ * that the climb-only write then discards, and the packet it already sent does not un-send.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public final class InjuryRules {
 
     private InjuryRules() {}

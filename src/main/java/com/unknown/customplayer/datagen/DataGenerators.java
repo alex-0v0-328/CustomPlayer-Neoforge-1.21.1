@@ -12,6 +12,15 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
+/**
+ * Wires every generator that runs at datagen time.
+ *
+ * <p>⚠ A damage type has to be written before its tags, because the tag provider resolves the key
+ * against the registry the provider above it contributes.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID)
 public final class DataGenerators {
 

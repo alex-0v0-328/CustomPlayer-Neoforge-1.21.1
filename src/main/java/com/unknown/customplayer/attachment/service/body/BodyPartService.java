@@ -9,6 +9,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
+/**
+ * The only writer of a part's condition and of its marks.
+ *
+ * <p>⚠ Reads take a Player and writes take a ServerPlayer, which turns "writes happen server-side"
+ * into a compile-time guarantee instead of a habit.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public final class BodyPartService {
 
     private BodyPartService() {}

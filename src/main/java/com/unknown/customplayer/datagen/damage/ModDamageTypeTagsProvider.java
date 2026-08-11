@@ -14,6 +14,15 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Writes the damage type tags.
+ *
+ * <p>⚠ "Bypasses armor" is a tag, not a field on the damage type. Creative is deliberately NOT
+ * covered here -- vanilla's own invulnerability is what should stop it.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public class ModDamageTypeTagsProvider extends TagsProvider<DamageType> {
 
     public ModDamageTypeTagsProvider(PackOutput output,

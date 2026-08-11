@@ -15,6 +15,15 @@ import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.minecraft.world.level.GameRules;
 
+/**
+ * The one place that decides what a body carries across a death.
+ *
+ * <p>⚠ Installed items drop at the death, not at the clone. By clone time the old entity's position
+ * and its drop window are already gone.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID)
 public final class PlayerDataEvents {
 

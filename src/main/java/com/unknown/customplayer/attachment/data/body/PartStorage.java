@@ -7,6 +7,15 @@ import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.world.item.ItemStack;
 
+/**
+ * What is installed in each part; the part itself is the address.
+ *
+ * <p>⚠ A read hands back a COPY and the constructor copies again, so a change reaches the player only
+ * through {@code with}. Mutate the copy and put it back; nothing here ever aliases.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public record PartStorage(Map<BodyPart, ItemStack> installed) {
 
     public static final PartStorage DEFAULT = new PartStorage(Map.of());

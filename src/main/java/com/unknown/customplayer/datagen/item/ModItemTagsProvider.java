@@ -12,6 +12,15 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Writes one item tag per installable part, every one of them empty.
+ *
+ * <p>⚠ Empty is the point. This mod owns no items, so naming one here would make a library mod depend
+ * on a content mod.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public class ModItemTagsProvider extends ItemTagsProvider {
 
     public ModItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,

@@ -13,6 +13,15 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+/**
+ * Every client-side registration this mod makes: key mappings, screens, and the key's own tick.
+ *
+ * <p>⚠ The key only asks. Opening the menu belongs to the server, and setting the screen on the
+ * client instead would leave the two sides disagreeing about what is open.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID, value = Dist.CLIENT)
 public final class ClientEvents {
 

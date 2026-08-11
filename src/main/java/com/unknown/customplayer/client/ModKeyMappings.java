@@ -5,6 +5,12 @@ import net.minecraft.client.KeyMapping;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import org.lwjgl.glfw.GLFW;
 
+/**
+ * The mod's key bindings.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public final class ModKeyMappings {
 
     private ModKeyMappings() {}

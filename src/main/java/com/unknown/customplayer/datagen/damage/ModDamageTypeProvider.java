@@ -12,6 +12,12 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraft.world.damagesource.DamageScaling;
 import net.minecraft.world.damagesource.DamageType;
 
+/**
+ * Writes this mod's damage types, which live in a datapack registry rather than a deferred one.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public class ModDamageTypeProvider extends DatapackBuiltinEntriesProvider {
 
     private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()

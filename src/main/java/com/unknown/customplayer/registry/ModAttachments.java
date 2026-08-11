@@ -12,6 +12,15 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
+/**
+ * The attachments this mod puts on a player.
+ *
+ * <p>⚠ The owner-only sync predicate is why this mod needs no packets for data at all. When a reader
+ * other than the owner appears, loosen the predicate rather than adding a packet.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public final class ModAttachments {
 
     private ModAttachments() {}

@@ -7,6 +7,15 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * The stream codecs this mod adds, for enums and for enum- or id-keyed maps.
+ *
+ * <p>⚠ A nullable enum is shifted by one so that zero means unset, because a part carrying no ailment
+ * is a real state rather than a missing one.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public final class ModStreamCodecs {
 
     private ModStreamCodecs() {}

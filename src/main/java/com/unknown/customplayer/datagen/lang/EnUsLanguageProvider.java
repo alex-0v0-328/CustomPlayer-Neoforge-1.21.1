@@ -8,6 +8,16 @@ import com.unknown.customplayer.custom.enums.body.BodyPart;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
+/**
+ * The English strings, written as an aligned table.
+ *
+ * <p>⚠ Both providers keep the same key order and the same value column, so the two files diff
+ * against each other line for line. They take the enum constant, never its key string.
+ *
+ * @author Alex
+ * @since 1.0.0
+ * @see ZhCnLanguageProvider
+ */
 public class EnUsLanguageProvider extends LanguageProvider {
 
     public EnUsLanguageProvider(PackOutput output) {

@@ -16,6 +16,15 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * The body screen: a figure drawn with plain fills, with one slot per part laid over it.
+ *
+ * <p>⚠ The hit-test order is the REVERSE of the draw order, because the senses are painted on top of
+ * the skull. Share one order between them and every eye pixel answers "brain".
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public class BodyPartScreen extends AbstractContainerScreen<BodyPartMenu> {
 
     private record Box(int x1, int y1, int x2, int y2) {}

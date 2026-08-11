@@ -13,6 +13,15 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * One part's condition: an ailment, plus whatever marks a dependent mod has put on it.
+ *
+ * <p>⚠ At most ONE ailment, never a set -- the worse reading wins. Ordinal order within a scale IS
+ * the severity order, and nothing but {@code worseThan()} may read it that way.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public record PartState(@Nullable Ailment ailment, Map<ResourceLocation, PartMark> marks) {
 
     public static final PartState DEFAULT = new PartState(null, Map.of());

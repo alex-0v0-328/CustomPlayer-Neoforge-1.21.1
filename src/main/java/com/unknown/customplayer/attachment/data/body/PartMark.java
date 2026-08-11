@@ -6,6 +6,15 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
+/**
+ * Two independent counts held against one mark key.
+ *
+ * <p>⚠ This mod never learns what a mark means, so whether those counts convert into one another is
+ * the owning mod's rule and must not be decided here.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public record PartMark(long mark, long speck) {
 
     public static final PartMark DEFAULT = new PartMark(0L, 0L);

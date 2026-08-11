@@ -23,6 +23,15 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
+/**
+ * The mod's command and its alias, which share one node so that the two cannot drift apart.
+ *
+ * <p>⚠ A dependent mod adds its OWN root command and never a branch here, so this jar's command
+ * surface stays exactly as wide as this jar's own data.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 @EventBusSubscriber(modid = CustomPlayer.MOD_ID)
 public final class ModCommand {
 

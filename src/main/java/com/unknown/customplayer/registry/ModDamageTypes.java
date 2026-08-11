@@ -6,6 +6,15 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
 
+/**
+ * The keys of this mod's damage types.
+ *
+ * <p>⚠ Damage types are a datapack registry rather than a deferred one, so this class owns only the
+ * keys and the JSON is written at datagen time.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public final class ModDamageTypes {
 
     private ModDamageTypes() {}

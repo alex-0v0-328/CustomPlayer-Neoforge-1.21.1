@@ -9,6 +9,12 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+/**
+ * The container menu this mod registers.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public final class ModMenus {
 
     private ModMenus() {}

@@ -13,6 +13,15 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The container behind the body screen: one slot per part.
+ *
+ * <p>⚠ Saving hangs off a container listener rather than an override of the changed hook -- a menu is
+ * not a container listener, so that override never runs and a logout would eat the deposit.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public class BodyPartMenu extends AbstractContainerMenu {
 
     public static final BodyPart[] SLOTS = {

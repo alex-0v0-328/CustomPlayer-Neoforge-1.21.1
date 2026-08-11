@@ -8,6 +8,15 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Applying, worsening and healing an ailment, and the one consequence any of them has today.
+ *
+ * <p>⚠ {@code apply} sets and {@code worsen} only ever climbs. Rules fire on every qualifying hit,
+ * so a later, smaller one must never undo what an earlier one did.
+ *
+ * @author Alex
+ * @since 1.0.0
+ */
 public final class InjuryService {
 
     private InjuryService() {}
