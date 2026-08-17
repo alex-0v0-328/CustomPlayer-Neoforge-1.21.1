@@ -39,6 +39,3 @@ run/
 repo/
 !**/src/**/repo/
 
-### Claude ###
-# Private working notes for the agent. Mirrors guzhenren's, which is also untracked.
-CLAUDE.md
