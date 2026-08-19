@@ -1,5 +1,6 @@
 package com.unknown.customplayer.menu;
 
+import com.unknown.customplayer.attachment.data.body.PartStorage;
 import com.unknown.customplayer.attachment.service.body.InjuryService;
 import com.unknown.customplayer.attachment.service.body.PartStorageService;
 import com.unknown.customplayer.custom.enums.body.BodyPart;
@@ -87,9 +88,11 @@ public class BodyPartMenu extends AbstractContainerMenu {
 
     private void save() {
         if (loading || !(player instanceof ServerPlayer server)) return;
+        PartStorage storage = PartStorage.DEFAULT;
         for (int i = 0; i < PART_SLOTS; i++) {
-            PartStorageService.install(server, SLOTS[i], parts.getItem(i));
+            storage = storage.with(SLOTS[i], parts.getItem(i));
         }
+        PartStorageService.store(server, storage);
     }
 
     @Override
